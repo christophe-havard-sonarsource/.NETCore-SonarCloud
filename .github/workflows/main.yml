@@ -32,19 +32,25 @@ jobs:
           java-version: 1.11
 
       # Runs a set of commands using the runners shell
-      - name: Install SonarScanner .NET Global tool
+      - name: Cache SonarQube scanner
+        id: cache-sonar-scanner
+        uses: actions/cache@v1
+        with:
+          path: .\.sonar\scanner
+          key: ${{ runner.os }}-sonar-scanner
+          restore-keys: ${{ runner.os }}-sonar-scanner
+      - name: Install SonarQube scanner
+        if: steps.cache-sonar-scanner.outputs.cache-hit != 'true'
+        shell: powershell
         run: |
-          dotnet tool install --global dotnet-sonarscanner
-          export PATH="$PATH:/root/.dotnet/tools"
-          
-      - name: SonarScanner STEP 1 - BEGIN
-        run: dotnet sonarscanner begin /k:"Github_Actions_DotNetCore" /d:"sonar.login=${{secrets.SONAR_TOKEN}}" /d:"sonar.host.url=${{secrets.SONAR_URL}}"
-          
-      - name: Build & Test
-        run: |         
-          dotnet restore
-          dotnet build --no-restore --configuration Release
-          dotnet test --no-build --configuration Release
-          
-      - name: SonarScanner STEP 2 - END
+          New-Item -Path .\.sonar\scanner -ItemType Directory
+          dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
+      - name: Build and analyze
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+        shell: powershell
+        run: |
+          .\.sonar\scanner\dotnet-sonarscanner begin /k:"christophe-havard-sonarsource_Github_Actions_DotNetCore" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="${{ secrets.SONAR_HOST_URL }}"
+          dotnet build
+          .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
         run: dotnet sonarscanner end /d:"sonar.login=${{secrets.SONAR_TOKEN}}"
