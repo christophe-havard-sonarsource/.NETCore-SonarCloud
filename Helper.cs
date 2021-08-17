@@ -37,5 +37,12 @@ public static class Helper {
             for(int i = 10; i < 10; i++){}
             return 2*num;
         }
+        public static void DoNothingAgain(){
+            Environment.GetEnvironmentVariable("postgre_connection");
+            int i = 0;
+            while(i< 100){
+                // toto
+            }
+        }
 }
 }
