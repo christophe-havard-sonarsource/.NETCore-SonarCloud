@@ -7,11 +7,6 @@ namespace Surfrider {
 
 public static class Helper {
     
-        // https://rules.sonarsource.com/csharp/type/Bug/RSPEC-3889
-        Thread.CurrentThread.Suspend(); // Noncompliant
-        Thread.CurrentThread.Resume(); // Noncompliant
-    
-    
         private static string GetKeyVaultConnectionString(string secretName)
         {
 
@@ -43,6 +38,13 @@ public static class Helper {
             return 2*num;
         }
         public static void DoNothingAgain(){
+           // https://rules.sonarsource.com/csharp/type/Bug/RSPEC-3984
+            int x = -1;
+            if (x < 0)
+            {
+                new ArgumentException("x must be nonnegative");
+            }
+            
             Environment.GetEnvironmentVariable("postgre_connection");
             int i = 0;
             while(i< 100){
