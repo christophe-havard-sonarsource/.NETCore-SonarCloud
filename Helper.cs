@@ -6,7 +6,25 @@ using Microsoft.Extensions.Configuration;
 namespace Surfrider {
 
 public static class Helper {
-    // https://docs.microsoft.com/en-us/azure/key-vault/secrets/quick-create-net
+    
+    
+        // https://rules.sonarsource.com/csharp/type/Bug/RSPEC-4275
+        private int x;
+        private int y;
+
+        public int X
+        {
+            get { return x; }
+            set { x = value; }
+        }
+
+        public int Y
+        {
+            get { return x; }  // Noncompliant: field 'y' is not used in the return value
+            set { x = value; } // Noncompliant: field 'y' is not updated
+        }
+    
+    
         private static string GetKeyVaultConnectionString(string secretName)
         {
 
