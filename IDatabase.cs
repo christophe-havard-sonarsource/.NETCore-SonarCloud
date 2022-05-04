@@ -9,6 +9,6 @@ namespace Surfrider {
     {
         Task<int> ExecuteNonQuery(string query, IDictionary<string, object> args = null);
         Task<string> ExecuteStringQuery(string query, IDictionary<string, object> args = null);
-    }
+    }//comment
 
 }
